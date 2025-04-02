@@ -1,0 +1,22 @@
+// INSTALL PRISMA
+npm install prisma --save-dev
+
+// INIT PROJECT 
+npx prisma init
+
+// CREATE NEW MIGRATIONs
+npx prisma migrate dev --name init
+
+// INSERIRE SEED
+npx prisma db seed
+
+// PRISMA DB ONLINE
+npx prisma studio
+
+
+npm i --save @nestjs/config
+
+--------------------------------------------
+
+CREATE CERTIFICATE HTTPS
+mkcert -key-file ./src/cert/key.pem -cert-file ./src/cert/cert.pem localhost 192.168.1.x

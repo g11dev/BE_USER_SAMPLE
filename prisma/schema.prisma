@@ -1,0 +1,81 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+//---------------------------------------------------------------------//
+//GOAL: represent (and create) the tables schemes on our db (postgres)
+
+model User {
+  id        Int      @id @default(autoincrement())
+  role      Role     @default(PLAYER)
+  createdAt DateTime @default(now())
+
+  username String @unique @db.VarChar(20)
+  email    String @unique
+  image    String
+
+  events Event[]
+}
+
+model Bartender {
+  id        Int      @id @default(autoincrement())
+  role      Role     @default(BARTENDER)
+  createdAt DateTime @default(now())
+
+  locationName String @unique @db.VarChar(50)
+  email        String @unique
+  image        String
+  address      String @db.VarChar(50)
+
+  events Event[]
+}
+
+enum Role {
+  ADMIN
+  PLAYER
+  BARTENDER
+}
+
+model Event {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  published Boolean  @default(false)
+  ended     Boolean  @default(false)
+
+  title       String    @db.VarChar(50)
+  image       String
+  date        DateTime
+  description String?   @db.VarChar(200)
+  bartenderId Int
+  categoryId  Int
+  bartender   Bartender @relation(fields: [bartenderId], references: [id])
+  category    Category  @relation(fields: [categoryId], references: [id])
+
+  users     User[]
+  questions Question[]
+}
+
+model Question {
+  id          Int      @id @default(autoincrement())
+  question    String
+  answers     String[] // add interface type?
+  rightAnswer String
+  category    Category @relation(fields: [categoryId], references: [id])
+  categoryId  Int
+  Event       Event?   @relation(fields: [eventId], references: [id])
+  eventId     Int?
+}
+
+model Category {
+  id           Int        @id @default(autoincrement())
+  name         String     @unique @db.VarChar(20)
+  icon         String
+  question     Question[]
+  futureEvents Event[]
+}

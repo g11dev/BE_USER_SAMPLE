@@ -1,0 +1,20 @@
+// INSTALL PRISMA
+npm install prisma --save-dev
+
+// INIT PROJECT 
+npx prisma init
+
+//GENERATE CLIENT (fa le funzioni)
+npx prisma generate
+
+// CREATE NEW MIGRATIONs (fa modifiche a tabelle nel db)
+npx prisma migrate dev --name init
+
+// INSERIRE SEED
+npx prisma db seed
+
+// PRISMA DB ONLINE
+npx prisma studio
+
+--------------------------------------------
+

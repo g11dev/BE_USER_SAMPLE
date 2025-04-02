@@ -1,0 +1,82 @@
+1. [MOVE to BRANCH COMPONENTE]
+- git checkout master/ramo da cui voglio staccare branch 
+- git pull
+STESSA COSA DI 
+-> andare nel menu sopra e clickare "origin/ ramo..."
+
+2. [CREATE MY BRANCH]
+- git checkout -b SMAW-XXXX-task-name
+- git push -u origin SMAW-XXXX-task-name
+
+######################## SVILUPPO #####################################
+
+3. [PUSH on REMOTO]
+- git pull origin COMPONENTE-BIG (soprattutto su task lunghi) 
+- check COMMIT GUIDELINES per decidere txt message
+- commit & push da gui (spesso non il file enviroment)
+
+####################### FINISCO LAVORO ################################ (Controllo che builda)
+
+4. [MERGE SU DEV] (rilascio viene fatto da Jenkins)
+- git push 
+- git checkout develop 
+- git pull COMPONENTE-BIG ->  (in caso conflitti -> chiedere)
+- git pull origin BRANCH(my task) ->  (in caso conflitti -> chiedere) -> poi ctrl + X
+- git push 
+
+####################### SE GIORNO DOPO SU DEV TUTTO OK ################
+
+5. [MERGE REQUEST] 
+- git pull
+- git pull origin COMPONENTE-BIG(di riferimento)
+- ctrl X 
+- git push
+- git checkout BIG-COMPONENTE(di riferimento)
+- git pull origin MY-BRANCH
+- ctrl X
+- git push
+- su gitlab -> assist Merge Request
+- cambiare branch to merge... MIO BRANCH(di provenienza)(= COMPONENTE)
+- Assignee
+- Flag Delete + Squash
+
+####################### SE APPROVED ###################################
+
+6. [MERGING TO COMPONENT(di riferimento)]
+- git pull
+- git pull origin COMPONENTE(di riferimento)
+- ctrl X 
+- git push
+- git checkout COMPONENTE
+- git pull
+- git pull origin BRANCH(my task)
+- git pull
+- git push
+
+###################### QUANDO È MOMENT ################################
+
+7. [MERGING WITH test]
+***se problemi in giallo nel termibale e assist -> ~git pull.base...~ (primo dei comandi proposti da hint)(~ = AltGr + ì)
+- git checkout test
+- git pull
+- git pull origin COMPONENTE
+	- se conflitti -> INCOMING = mio codice, BOTH = doppione
+- git push
+- git checkout COMPONENTE
+
+8. [PULIZIA BRANCHES]
+- cancellare branch su gitlab ->  "delete source branch" (button on gitlab)
+- cancellare branch locale -> "git branch -d <branchName>"
+
+9. [TASK -> COMPLETED Column]
+- spostare il task mergiato sul componente, sotto la colonna "Completed"
+
+--------------------------------------------------------
+[DELETE BRANCH]
+- git branch --delete <branchname>
+
+[DELETE LOCALS-ORIGIN-BRANCH NOT EXISTENT IN REMOTE]
+- git remote prune origin
+
+[DELETE LOCALS-BRANCH NOT EXISTENT IN REMOTE]
+- git branch -vv | grep 'gone]' | awk '{print $1}' | xargs git branch -D
