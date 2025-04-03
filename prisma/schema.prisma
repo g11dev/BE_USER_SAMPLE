@@ -12,70 +12,72 @@ datasource db {
 //GOAL: represent (and create) the tables schemes on our db (postgres)
 
 model User {
-  id        Int      @id @default(autoincrement())
-  role      Role     @default(PLAYER)
-  createdAt DateTime @default(now())
-
-  username String @unique @db.VarChar(20)
-  email    String @unique
-  image    String
-
-  events Event[]
-}
-
-model Bartender {
-  id        Int      @id @default(autoincrement())
-  role      Role     @default(BARTENDER)
-  createdAt DateTime @default(now())
-
-  locationName String @unique @db.VarChar(50)
-  email        String @unique
-  image        String
-  address      String @db.VarChar(50)
-
-  events Event[]
+  id           Int           @id @default(autoincrement())
+  role         Role          @default(USER)
+  username     String        @unique @db.VarChar(20)
+  createdAt    DateTime      @default(now())
+  email        String        @unique
+  // password     String
+  futureEvents FutureEvent[]
+  pastEvents   PastEvent[]
 }
 
 enum Role {
   ADMIN
-  PLAYER
-  BARTENDER
+  USER
 }
 
-model Event {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  published Boolean  @default(false)
-  ended     Boolean  @default(false)
+model FutureEvent {
+  id         Int        @id @default(autoincrement())
+  createdAt  DateTime   @default(now())
+  title      String     @db.VarChar(50)
+  image      String
+  date       DateTime
+  published  Boolean    @default(false)
+  location   Location   @relation(fields: [locationId], references: [id])
+  locationId Int
+  categories Category[]
+  users      User[]
+  questions  Question[]
+}
 
-  title       String    @db.VarChar(50)
-  image       String
+model Location {
+  id           Int           @id @default(autoincrement())
+  name         String        @db.VarChar(50)
+  address      String        @db.VarChar(50)
+  image        String
+  pastEvents   PastEvent[]
+  futureEvents FutureEvent[]
+
+  @@unique([name, address])
+}
+
+model PastEvent {
+  id          Int        @id @default(autoincrement())
+  title       String     @db.VarChar(50)
+  location    Location   @relation(fields: [locationId], references: [id])
+  locationId  Int
   date        DateTime
-  description String?   @db.VarChar(200)
-  bartenderId Int
-  categoryId  Int
-  bartender   Bartender @relation(fields: [bartenderId], references: [id])
-  category    Category  @relation(fields: [categoryId], references: [id])
-
-  users     User[]
-  questions Question[]
+  description String?    @db.VarChar(200)
+  categories  Category[]
+  users       User[]
 }
 
 model Question {
-  id          Int      @id @default(autoincrement())
-  question    String
-  answers     String[] // add interface type?
-  rightAnswer String
-  category    Category @relation(fields: [categoryId], references: [id])
-  categoryId  Int
-  Event       Event?   @relation(fields: [eventId], references: [id])
-  eventId     Int?
+  id           Int           @id @default(autoincrement())
+  question     String
+  answers      String[] // add interface type?
+  rightAnswer  String
+  category     Category      @relation(fields: [categoryId], references: [id])
+  categoryId   Int
+  futureEvents FutureEvent[]
 }
 
 model Category {
-  id           Int        @id @default(autoincrement())
-  name         String     @unique @db.VarChar(20)
+  id           Int           @id @default(autoincrement())
+  name         String        @unique @db.VarChar(20)
   icon         String
   question     Question[]
-  futureEvents Event[]
+  futureEvents FutureEvent[]
+  pastEvents   PastEvent[]
 }
